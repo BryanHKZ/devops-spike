@@ -1,0 +1,8 @@
+.centrar{
+    display:flex;
+    justify-content: center;
+}
+
+.btn-tam{
+    width: 100%;
+}
