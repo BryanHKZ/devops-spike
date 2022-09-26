@@ -1,8 +1,13 @@
 import React from 'react'
 
-const Order = () => {
+const Order = ({product}) => {
   return (
-    <div>Order</div>
+    <tr>
+    <td>{product.nameProduct}</td>
+    <td>{product.codeProduct}</td>
+    <td>{product.price}</td>
+    <td>{product.amount}</td>
+    </tr>
   )
 }
 
