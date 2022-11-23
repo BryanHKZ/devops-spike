@@ -14,7 +14,9 @@ import {
 const OrderState = (props) => {
   const initialState = {
     orderList: [],
-    order: null,
+    order: {
+      products: [],
+    },
     error: null,
     orderLoading: true,
   };

@@ -51,7 +51,6 @@ const AuthState = (props) => {
       dispatch({
         type: AUTH_ERROR,
       });
-
       window.location.href = "/login";
     }
 
@@ -63,7 +62,8 @@ const AuthState = (props) => {
         payload: respuesta.data.customer,
       });
     } catch (error) {
-      console.log(error.response);
+      window.location.href = "/login";
+
       dispatch({
         type: AUTH_ERROR,
       });

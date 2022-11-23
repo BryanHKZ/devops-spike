@@ -1,26 +1,30 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AxiosClient from "../AxiosClient/AxiosClient";
 import Order from "./Order";
 import DataClient from "./DataClient";
 import Swal from "sweetalert2";
-import orderContext from "../../context/order/orderState";
+import orderContext from "../../context/order/orderContext";
 import authContext from "../../context/auth/authContext";
 
 import { Link } from "react-router-dom";
 
 const ListOrder = () => {
-  const { getOrders } = useContext(orderContext);
+  const { getOrders, order, createOrder } = useContext(orderContext);
   const { customer } = useContext(authContext);
-  const { identification, name, adress, cellPhone } = customer;
+  console.log(customer);
+  const { id, name } = customer;
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
   const [registrarOr, setregistrarOr] = useState({
-    idorder: Math.floor(Math.random() * (99999 - 10000)) + 10000,
-    identificaction: identification,
-    products: orderCont,
+    addressCustomer: address,
+    phoneCustomer: phone,
+    idCustomer: id,
+    products: order.products,
   });
   const { idorder } = registrarOr;
   const register_Order = async () => {
     try {
-      await AxiosClient.post("/order", registrarOr);
+      await createOrder(registrarOr);
       Swal.fire({
         icon: "success",
         text: "Registro exitoso",
@@ -29,6 +33,10 @@ const ListOrder = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
 
   return (
     <div className="container">

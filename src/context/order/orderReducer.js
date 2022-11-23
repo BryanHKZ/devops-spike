@@ -27,8 +27,8 @@ export const OrderReducer = (state, action) => {
       return {
         ...state,
         order: {
-          ...order,
-          products: [...state.order.products, action.payload],
+          ...state.order,
+          products: [...state.order?.products, action.payload],
         },
       };
     case ERROR_PEDIDOS:
