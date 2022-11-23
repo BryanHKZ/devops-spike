@@ -1,14 +1,14 @@
-import React from 'react'
+import React from "react";
 
-const Order = ({product}) => {
+const Order = ({ product }) => {
   return (
     <tr>
-    <td>{product.nameProduct}</td>
-    <td>{product.codeProduct}</td>
-    <td>{product.price}</td>
-    <td>{product.amount}</td>
+      <td>{product.nameProduct}</td>
+      <td>{product.codeProduct}</td>
+      <td>{product.price}</td>
+      <td>{product.amount}</td>
     </tr>
-  )
-}
+  );
+};
 
-export default Order
+export default Order;

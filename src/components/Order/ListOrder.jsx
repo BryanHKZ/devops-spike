@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
 import AxiosClient from "../AxiosClient/AxiosClient";
-import useOrder from "../../hooks/useOrder";
 import Order from "./Order";
 import DataClient from "./DataClient";
 import Swal from "sweetalert2";
+import orderContext from "../../context/order/orderState";
+import authContext from "../../context/auth/authContext";
+
 import { Link } from "react-router-dom";
 
 const ListOrder = () => {
-  const { orderCont, control, dataClien } = useOrder();
-  const { identification,name,adress,cellPhone } = dataClien;
+  const { getOrders } = useContext(orderContext);
+  const { customer } = useContext(authContext);
+  const { identification, name, adress, cellPhone } = customer;
   const [registrarOr, setregistrarOr] = useState({
     idorder: Math.floor(Math.random() * (99999 - 10000)) + 10000,
     identificaction: identification,
     products: orderCont,
   });
-  const {idorder} = registrarOr;
+  const { idorder } = registrarOr;
   const register_Order = async () => {
     try {
       await AxiosClient.post("/order", registrarOr);
@@ -37,50 +40,41 @@ const ListOrder = () => {
         </div>
         {control !== "" ? (
           <div className="row justify-content-center mt-5 centrar">
-            
             <form className="col-6 mt-3 mb-5">
-                <label>
-                  <strong>Id Orden</strong>
-                </label>
-                <input
-                  className="form-control mb-4 "
-                  type="number"
-                  value={idorder}
-                />
-                <label>
-                  <strong>Identificación</strong>
-                </label>
-                <input
-                  className="form-control mb-4"
-                  type="number"
-                  value={identification}
-                />
-                <label>
-                  <strong>Nombre</strong>
-                </label>
-                <input
-                  className="form-control mb-4"
-                  type="text"
-                  value={name}
-                />
-                <label>
-                  <strong>Telefono</strong>
-                </label>
-                <input
-                  className="form-control mb-4"
-                  type="text"
-                  value={cellPhone}
-                />
-                <label>
-                  <strong>Direccion</strong>
-                </label>
-                <input
-                  className="form-control "
-                  type="text"
-                  value={adress}
-                />
+              <label>
+                <strong>Id Orden</strong>
+              </label>
+              <input
+                className="form-control mb-4 "
+                type="number"
+                value={idorder}
+              />
+              <label>
+                <strong>Identificación</strong>
+              </label>
+              <input
+                className="form-control mb-4"
+                type="number"
+                value={identification}
+              />
+              <label>
+                <strong>Nombre</strong>
+              </label>
+              <input className="form-control mb-4" type="text" value={name} />
+              <label>
+                <strong>Telefono</strong>
+              </label>
+              <input
+                className="form-control mb-4"
+                type="text"
+                value={cellPhone}
+              />
+              <label>
+                <strong>Direccion</strong>
+              </label>
+              <input className="form-control " type="text" value={adress} />
             </form>
-            
+
             <div className="col-8">
               <table className="table table-responsive">
                 {orderCont.length === 0 ? (
@@ -105,10 +99,13 @@ const ListOrder = () => {
                   </>
                 )}
               </table>
-              <button className="btn btn-success btn-block mx-2 mt-4 mb-5" onClick={register_Order}>
+              <button
+                className="btn btn-success btn-block mx-2 mt-4 mb-5"
+                onClick={register_Order}
+              >
                 Crear Orden
               </button>
-              <Link className="btn btn-primary btn-block mx-2 mt-4 mb-5"  to="/">
+              <Link className="btn btn-primary btn-block mx-2 mt-4 mb-5" to="/">
                 Volver
               </Link>
             </div>

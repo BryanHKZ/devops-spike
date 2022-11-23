@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
-import AxiosClient from "../AxiosClient/AxiosClient";
 import Product from "./Product";
 import Swal from "sweetalert2/dist/sweetalert2.all.js";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import productContext from "../../context/product/productContext";
+import authContext from "../../context/auth/authContext";
 
 export const ListProducts = () => {
-  const [Products, setproductList] = useState([]);
-  const [nameProduct, setnameProduct] = useState("");
-  const [Product_Id, setProduct_Id] = useState({});
+  const { getProducts, productList } = useContext(productContext);
+  const { autenticado, isAuthenticated } = useContext(authContext);
+
+  const [filterByName, setFilterByName] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (nameProduct === "") {
+    if (filterByName === "") {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -25,8 +29,8 @@ export const ListProducts = () => {
   useEffect(() => {
     const Search = async () => {
       try {
-        const { data } = await AxiosClient.get("/products");
-        setproductList(data.listProducts);
+        isAuthenticated();
+        getProducts();
       } catch (error) {
         console.log(error);
       }
@@ -36,9 +40,7 @@ export const ListProducts = () => {
 
   const handleSubmitForm = async () => {
     try {
-      const { data } = await AxiosClient.get(`/products/${nameProduct}`);
-      setProduct_Id(data.product_existed);
-      setnameProduct("");
+      getProducts(filterByName);
     } catch (error) {
       console.log(error);
     }
@@ -47,30 +49,45 @@ export const ListProducts = () => {
   return (
     <>
       <div className="col-5">
-        <Link
-          type="submit"
-          className="btn btn-primary btn-block mx-5 mt-4"
-          to="/new"
-        >
-          {" "}
-          Agregar Producto
-        </Link>
-        <Link
-          type="submit"
-          className="btn btn-success btn-block mx-2 mt-4"
-          to="/register"
-        >
-          {" "}
-          Registrate
-        </Link>
-        <Link
-          type="submit"
-          className="btn btn-success btn-block mx-2 mt-4 "
-          to="/order"
-        >
-          {" "}
-          Tu Orden
-        </Link>
+        {autenticado && (
+          <Link
+            type="submit"
+            className="btn btn-primary btn-block mx-5 mt-4"
+            to="/new"
+          >
+            {" "}
+            Agregar Producto
+          </Link>
+        )}
+        {autenticado && (
+          <Link
+            type="submit"
+            className="btn btn-success btn-block mx-2 mt-4 "
+            to="/order"
+          >
+            {" "}
+            Tu Orden
+          </Link>
+        )}
+        {!autenticado ? (
+          <Link
+            type="submit"
+            className="btn btn-success btn-block mx-2 mt-4"
+            to="/login"
+          >
+            {" "}
+            Iniciar Sesión
+          </Link>
+        ) : (
+          <Link
+            type="submit"
+            className="btn btn-success btn-block mx-2 mt-4"
+            to="/login"
+          >
+            {" "}
+            Cerrar Sesión
+          </Link>
+        )}
       </div>
       <div className="row centrar">
         <div className="col-8">
@@ -82,9 +99,9 @@ export const ListProducts = () => {
               type="text"
               placeholder="Que Producto deseas ver?"
               className="form-control mt-3"
-              value={nameProduct}
+              value={filterByName}
               onChange={(e) => {
-                setnameProduct(e.target.value);
+                setFilterByName(e.target.value);
               }}
             />
             <button
@@ -96,21 +113,24 @@ export const ListProducts = () => {
             </button>
           </form>
         </div>
-        {Product_Id.codeProduct ? (
+        {selectedProduct.code ? (
           <div className="row centrar mt-4">
-            <Product product={Product_Id} key={Product_Id.codeProduct} />
+            <Product product={selectedProduct} key={selectedProduct.code} />
             <div className="col-10 centrar">
-            <button className="btn btn-block btn-primary" onClick={()=>{
-                setProduct_Id({});
-              }} >
-                    Ver lista
-                  </button>
+              <button
+                className="btn btn-block btn-primary"
+                onClick={() => {
+                  setSelectedProduct({});
+                }}
+              >
+                Ver lista
+              </button>
             </div>
           </div>
         ) : (
           <div className="row centrar mt-4">
-            {Products.map((product) => (
-              <Product product={product} key={product.codeProduct} />
+            {productList.map((product) => (
+              <Product product={product} key={product.code} />
             ))}
           </div>
         )}

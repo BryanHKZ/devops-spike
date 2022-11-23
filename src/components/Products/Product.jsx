@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, Modal, Col, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
-import useOrder from "../../hooks/useOrder";
+
+import orderContext from "../../context/order/orderContext";
 
 const Product = ({ product }) => {
+  const { addProductToOrder } = useContext(orderContext);
   const [show, setShow] = useState(false);
   const [order, setOrder] = useState({
-    nameProduct:product.nameProduct,
-    codeProduct: product.codeProduct,
-    price:product.price,
-    amount: ""
+    name: product.name,
+    code: product.code,
+    price: product.price,
+    amount: "",
   });
-  const { agregate_order } = useOrder();
-  const { codeProduct, amount } = order;
+  const { code, amount } = order;
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleChange = (e) => {
@@ -23,7 +24,7 @@ const Product = ({ product }) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if ([codeProduct, amount].includes("")) {
+    if ([code, amount].includes("")) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -31,26 +32,19 @@ const Product = ({ product }) => {
       });
       return;
     }
-    agregate_order(order);
-    setOrder({
-      codeProduct: product.codeProduct,
-      amount: "",
+
+    addProductToOrder({
+      ...product,
+      quantity: amount,
     });
     handleClose();
   };
   return (
-    <div className="card col-3 m-lg-4 ">
+    <div className="card col-3 m-lg-2 ">
       <div className="card-body">
-        <p className="card-text">
-          <p>Codigo: {product.codeProduct}</p>
-        </p>
-        <p className="card-text">
-          <p>Nombre: {product.nameProduct}</p>
-        </p>
-        <p className="card-text">
-          {" "}
-          <p>Precio: {product.price}</p>
-        </p>
+        <p className="card-text">Codigo: {product.code}</p>
+        <p className="card-text">Nombre: {product.name}</p>
+        <p className="card-text"> Precio: {product.price}</p>
       </div>
 
       <div className="card-footer">
@@ -64,7 +58,7 @@ const Product = ({ product }) => {
           keyboard={false}
         >
           <Modal.Header closeButton>
-            <Modal.Title>{product.nameProduct}</Modal.Title>
+            <Modal.Title>{product.name}</Modal.Title>
           </Modal.Header>
           <form onSubmit={handleSubmit}>
             <Modal.Body>
@@ -74,25 +68,25 @@ const Product = ({ product }) => {
                   <input
                     type="text"
                     className="form-control mb-3"
-                    value={product.codeProduct}
-                    name="codeProduct"
+                    value={product.code}
+                    name="code"
                     onChange={handleChange}
                   />
                 </Col>
                 <Col xs={6} md={6}>
-                  <label className="text-color">  Nombre</label>
+                  <label className="text-color"> Nombre</label>
                   <input
                     type="text"
                     className="form-control mb-3"
-                    name="product.nameProduct"
-                    value={product.nameProduct}
+                    name="product.name"
+                    value={product.name}
                     onChange={handleChange}
                   />
                 </Col>
               </Row>
               <Row>
-              <Col xs={6} md={6}>
-                  <label className="text-color">  Cantidad</label>
+                <Col xs={6} md={6}>
+                  <label className="text-color"> Cantidad</label>
                   <input
                     type="text"
                     className="form-control mb-3"
@@ -116,6 +110,6 @@ const Product = ({ product }) => {
       </div>
     </div>
   );
-}
+};
 
-export default Product
+export default Product;

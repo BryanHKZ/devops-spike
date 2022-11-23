@@ -1,33 +1,30 @@
-import {useState} from 'react'
-import useOrder from "../../hooks/useOrder";
-import AxiosClient from "../AxiosClient/AxiosClient";
+import { useEffect } from "react";
+import { useState, useContext } from "react";
+import authContext from "../../context/auth/authContext";
 
 const DataClient = () => {
-    const [email, setEmail] = useState("");
-    const {setControl,setdataClient} =useOrder();
-    const handleSubmit = e =>{
-        e.preventDefault();
-        if(email === ''){
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'No hay campo a buscar',
-          });
-          return
-        }
-        searchClient();
-        setEmail("");
-      }
+  const { isAuthenticated, customer } = useContext(authContext);
+  const [email, setEmail] = useState(customer.email);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "No hay campo a buscar",
+      });
+      return;
+    }
+  };
 
-      const searchClient = async () => {
-        try{
-            const { data } = await AxiosClient.post(`/profile`,{email});
-            setdataClient(data.Profile);
-            setControl(data.Profile.email);
-        }catch(error){
-          console.log(error);
-        }
-      }
+  useEffect(async () => {
+    try {
+      await isAuthenticated();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
     <div className="row centrar">
       <div className="col-8">
@@ -37,17 +34,21 @@ const DataClient = () => {
             placeholder="Email?"
             className="form-control mt-3"
             value={email}
-            onChange={(e)=>{setEmail(e.target.value)}}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
-          <button 
+          <button
             type="submit"
             className="btn btn-primary btn-block mt-3 btn-tam"
-          > Buscar</button>
+          >
+            {" "}
+            Buscar
+          </button>
         </form>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DataClient
+export default DataClient;
